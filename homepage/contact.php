@@ -11,7 +11,6 @@
 
 <body>
 
-    <!-- HEADER with Navigation -->
     <header>
         <div class="logo">
             <img src="../images/logo-transparent.png" alt="Lumacad Wash & Fold">
@@ -26,17 +25,14 @@
         <a href="#" class="book-now">BOOK NOW</a>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="fade-in contact-main">
 
-        <!-- CONTACT HEADER -->
         <div class="contact-header">
             <span class="contact-label">GET IN TOUCH</span>
             <h1>Contact Us</h1>
             <p>Have questions about our services? We'd love to hear from you. Reach out and we'll get back to you as soon as possible.</p>
         </div>
 
-        <!-- CONTACT SECTION -->
         <section class="contact-section">
             <div class="contact-container">
                 <!-- Contact Form -->
@@ -62,7 +58,6 @@
                     </form>
                 </div>
 
-                <!-- Contact Info -->
                 <div class="contact-info">
                     <div class="info-card">
                         <div class="info-icon">📍</div>
@@ -109,7 +104,6 @@
 
     </main>
 
-    <!-- FOOTER -->
     <footer>
         <div class="footer-container">
             <div class="footer-brand">
