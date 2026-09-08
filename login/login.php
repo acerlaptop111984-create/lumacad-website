@@ -2,6 +2,15 @@
 session_start();
 require_once '../database/config.php';
 
+if (isset($_SESSION['user_id'])) {
+    if ($_SESSION['role'] == 'admin') {
+        header("Location: ../admin-dashboard/dashboard.php");
+    } else {
+        header("Location: ../customer-dashboard/dashboard.php");
+    }
+    exit();
+}
+
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -20,9 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['role'] = $user['role'];
             
             if ($user['role'] == 'admin') {
-                header("Location: ../dashboard/admin.php");
+                header("Location: ../admin-dashboard/dashboard.php");
             } else {
-                header("Location: ../dashboard/customer.php");
+                header("Location: ../customer-dashboard/dashboard.php");
             }
             exit();
         } else {
@@ -58,7 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <a href="../homepage/pricing.php">PRICING</a>
             <a href="../homepage/contact.php">CONTACT</a>
         </nav>
-        <a href="#" class="book-now">BOOK NOW</a>
+        <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
+            <a href="../customer-dashboard/dashboard.php" class="book-now">BOOK NOW</a>
+        <?php else: ?>
+            <a href="#" class="book-now" onclick="alert('Please log in first'); return false;">BOOK NOW</a>
+        <?php endif; ?>
     </header>
 
     <main style="background: var(--teal-light); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; padding-top: 80px;">
@@ -98,44 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     </main>
 
-    <footer>
-        <div class="footer-container">
-            <div class="footer-brand">
-                <img src="../images/footerlogo-transparent.png" alt="Lumacad Wash & Fold" class="footer-logo">
-                <p>Fresh Laundry. Delivered with care.</p>
-            </div>
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <a href="../homepage/index.php">Home</a>
-                <a href="../homepage/index.php#services">Services</a>
-                <a href="../homepage/index.php#about">About</a>
-                <a href="../homepage/pricing.php">Pricing</a>
-                <a href="../homepage/contact.php">Contact</a>
-            </div>
-            <div class="footer-services">
-                <h4>Our Services</h4>
-                <a href="#">Wash & Fold</a>
-                <a href="#">Dry Cleaning</a>
-                <a href="#">Ironing</a>
-            </div>
-            <div class="footer-hours">
-                <h4>Business Hours</h4>
-                <p>Monday - Saturday</p>
-                <p>7:00 AM - 6:00 PM</p>
-            </div>
-            <div class="footer-contact">
-                <h4>Contact Us</h4>
-                <p>09119988776</p>
-                <p>lumacad.wash&fold@gmail.com</p>
-                <p>Dumaguete City, Negros Oriental</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Lumacad Wash & Fold. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
 </body>
 
 </html>
