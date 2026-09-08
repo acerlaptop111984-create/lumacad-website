@@ -50,12 +50,14 @@ $recent_orders = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC LIMI
             <img src="../images/footerlogo-transparent.png" alt="Lumacad" class="brand-logo">
         </div>
         <ul class="menu">
-            <li class="active"><a href="dashboard.php"><span> Dashboard</span></a></li>
-            <li><a href="orders.php"><span> Orders</span></a></li>
-            <li><a href="customers.php"><span> Customers</span></a></li>
-            <li><a href="services.php"><span> Services</span></a></li>
-            <li><a href="reviews.php"><span> Reviews</span></a></li>
-            <li class="logout"><a href="../logout/logout.php" onclick="return confirm('Are you sure you want to logout?')"><span> Logout</span></a></li>
+            <li><a href="../homepage/index.php"><span>Homepage</span></a></li>
+            <li><a href="dashboard.php"><span>Dashboard</span></a></li>
+            <li><a href="orders.php"><span>Orders</span></a></li>
+            <li><a href="customers.php"><span>Customers</span></a></li>
+            <li><a href="services.php"><span>Services</span></a></li>
+            <li><a href="reviews.php"><span>Reviews</span></a></li>
+            <li><a href="messages.php"><span>Messages</span></a></li>    
+            <li class="logout"><a href="../logout/logout.php"><span>Logout</span></a></li>
         </ul>
     </div>
 
