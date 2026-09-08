@@ -75,6 +75,7 @@ $completed_orders = $stmt->fetchColumn();
             <img src="../images/footerlogo-transparent.png" alt="Lumacad" class="brand-logo">
         </div>
         <ul class="menu">
+            <li><a href="../homepage/index.php"><span>Homepage</span></a></li>
             <li><a href="dashboard.php"><span>Dashboard</span></a></li>
             <li class="active"><a href="orders.php"><span>My Orders</span></a></li>
             <li><a href="booking.php"><span>New Booking</span></a></li>
