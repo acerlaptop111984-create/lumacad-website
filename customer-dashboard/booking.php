@@ -57,6 +57,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_booking'])) {
     <link rel="stylesheet" href="../css/customer.css">
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <title>New Booking - Lumacad</title>
+    <style>
+        .customer-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .customer-main .page-header {
+            text-align: center;
+            width: 100%;
+        }
+        .booking-form {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .alert {
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -66,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_booking'])) {
             <img src="../images/footerlogo-transparent.png" alt="Lumacad" class="brand-logo">
         </div>
         <ul class="menu">
+            <li><a href="../homepage/index.php"><span>Homepage</span></a></li>
             <li><a href="dashboard.php"><span>Dashboard</span></a></li>
             <li><a href="orders.php"><span>My Orders</span></a></li>
             <li class="active"><a href="booking.php"><span>New Booking</span></a></li>
