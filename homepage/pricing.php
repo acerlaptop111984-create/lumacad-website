@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,7 +26,11 @@
             <a href="pricing.php" class="active">PRICING</a>
             <a href="contact.php">CONTACT</a>
         </nav>
-        <a href="#" class="book-now">BOOK NOW</a>
+        <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
+            <a href="../customer-dashboard/dashboard.php" class="book-now">BOOK NOW</a>
+        <?php else: ?>
+            <a href="../login/login.php" class="book-now">BOOK NOW</a>
+        <?php endif; ?>
     </header>
 
     <main class="fade-in pricing-main">
@@ -35,7 +43,7 @@
 
         <div class="pricing-cards-wrapper">
             <div class="pricing-cards-container">
-                <!-- Regular Plan -->
+            
                 <div class="pricing-card">
                     <h3>REGULAR</h3>
                     <p class="card-subtitle">For light laundry loads</p>
@@ -46,7 +54,11 @@
                         <li>Light Ironing</li>
                         <li>Laundry Detergent</li>
                     </ul>
-                    <a href="#" class="btn-outline">CHOOSE PLAN</a>
+                    <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
+                        <a href="../customer-dashboard/booking.php" class="btn-outline">BOOK NOW</a>
+                    <?php else: ?>
+                        <a href="../login/login.php" class="btn-outline">CHOOSE PLAN</a>
+                    <?php endif; ?>
                 </div>
 
                 <div class="pricing-card popular">
@@ -60,7 +72,11 @@
                         <li>Laundry Detergent</li>
                         <li>Free Scent Booster</li>
                     </ul>
-                    <a href="#" class="btn-primary">CHOOSE PLAN</a>
+                    <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
+                        <a href="../customer-dashboard/booking.php" class="btn-primary">BOOK NOW</a>
+                    <?php else: ?>
+                        <a href="../login/login.php" class="btn-primary">CHOOSE PLAN</a>
+                    <?php endif; ?>
                 </div>
 
                 <div class="pricing-card">
@@ -75,7 +91,11 @@
                         <li>Free Scent Booster</li>
                         <li>Priority Service</li>
                     </ul>
-                    <a href="#" class="btn-outline">CHOOSE PLAN</a>
+                    <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
+                        <a href="../customer-dashboard/booking.php" class="btn-outline">BOOK NOW</a>
+                    <?php else: ?>
+                        <a href="../login/login.php" class="btn-outline">CHOOSE PLAN</a>
+                    <?php endif; ?>
                 </div>
             </div>
 
