@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,7 +28,11 @@
     <a href="contact.php">CONTACT</a>
 </nav>
 
-    <a href="#" class="book-now">BOOK NOW</a>
+    <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
+        <a href="../customer-dashboard/dashboard.php" class="book-now">BOOK NOW</a>
+    <?php else: ?>
+        <a href="../login/login.php" class="book-now">BOOK NOW</a>
+    <?php endif; ?>
 </header>
 
        <main class="fade-in">
@@ -37,7 +45,11 @@
         <h2>WASH LESS<br>LIVE <span class="highlight">MORE.</span></h2>
         <p>Spend less time doing laundry and more time doing what <br>matters most. We provide professional wash and fold <br>services with care, quality, and convenience in every load.</p>
         <div>
-    <a href="#" class="btn-primary">BOOK NOW</a>
+    <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
+        <a href="../customer-dashboard/dashboard.php" class="btn-primary">BOOK NOW</a>
+    <?php else: ?>
+        <a href="../login/login.php" class="btn-primary">BOOK NOW</a>
+    <?php endif; ?>
     <a href="#services" class="btn-secondary">VIEW SERVICES</a>
 </div>  
     </div>
@@ -153,30 +165,70 @@
 </section>
 
 
-<section class="testimonials">
+<!-- TESTIMONIALS CAROUSEL SECTION -->
+<section class="testimonials-carousel">
     <span class="testimonials-label">TESTIMONIALS</span>
     <h2>What Our Customers Say</h2>
     <p class="testimonials-intro">We take pride in delivering clean, fresh, and perfectly cared laundry. Here's what our customers have to say about their experience.</p>
-    <div class="testimonials-container">
-        <div class="testimonial-card">
-            <img src="../images/matthew-profile.jpg" alt="Matthew L." class="profile-img">
-            <h3>Matthew L.</h3>
-            <div class="stars">★★★★★</div>
-            <p>"Super convenient and affordable! Lumacad Laundry saves me so much time. My clothes are always fresh and neatly folded."</p>
+
+    <div class="carousel-wrapper">
+        <button class="carousel-btn prev-btn" onclick="moveSlide(-1)">&#10094;</button>
+
+        <div class="carousel-container" id="carouselContainer">
+            <!-- Static Reviews -->
+            <div class="carousel-slide">
+                <div class="testimonial-card">
+                    <img src="../images/matthew-profile.jpg" alt="Matthew L." class="profile-img">
+                    <h3>Matthew L.</h3>
+                    <div class="stars">★★★★★</div>
+                    <p>"Super convenient and affordable! Lumacad Laundry saves me so much time. My clothes are always fresh and neatly folded."</p>
+                </div>
+            </div>
+
+            <div class="carousel-slide">
+                <div class="testimonial-card">
+                    <img src="../images/anne-profile.jpg" alt="Anne H." class="profile-img">
+                    <h3>Anne H.</h3>
+                    <div class="stars">★★★★★</div>
+                    <p>"Reliable service and great quality. Their pickup and delivery is a game-changer for my busy schedule."</p>
+                </div>
+            </div>
+
+            <div class="carousel-slide">
+                <div class="testimonial-card">
+                    <img src="../images/spider-profile.jpg" alt="Spider M." class="profile-img">
+                    <h3>Spider M.</h3>
+                    <div class="stars">★★★★★</div>
+                    <p>"I love how my clothes come back smelling fresh and looking crisp. The team is friendly and very professional!"</p>
+                </div>
+            </div>
+
+    
+            <?php
+            require_once '../database/config.php';
+            $pdo = getConnection();
+            $stmt = $pdo->query("SELECT * FROM reviews ORDER BY created_at DESC LIMIT 10");
+            $reviews = $stmt->fetchAll();
+
+            foreach ($reviews as $review):
+            ?>
+            <div class="carousel-slide">
+                <div class="testimonial-card">
+                    <div class="profile-placeholder">👤</div>
+                    <h3><?php echo htmlspecialchars($review['customer_name']); ?></h3>
+                    <div class="stars"><?php echo str_repeat('★', $review['rating']) . str_repeat('☆', 5 - $review['rating']); ?></div>
+                    <p>"<?php echo htmlspecialchars($review['review_text']); ?>"</p>
+                    <small style="color: var(--gray-medium); font-family: var(--font-body);"><?php echo date('M d, Y', strtotime($review['created_at'])); ?></small>
+                </div>
+            </div>
+            <?php endforeach; ?>
         </div>
-        <div class="testimonial-card">
-            <img src="../images/anne-profile.jpg" alt="Anne H." class="profile-img">
-            <h3>Anne H.</h3>
-            <div class="stars">★★★★★</div>
-            <p>"Reliable service and great quality. Their pickup and delivery is a game-changer for my busy schedule."</p>
-        </div>
-        <div class="testimonial-card">
-            <img src="../images/spider-profile.jpg" alt="Spider M." class="profile-img">
-            <h3>Spider M.</h3>
-            <div class="stars">★★★★★</div>
-            <p>"I love how my clothes come back smelling fresh and looking crisp. The team is friendly and very professional!"</p>
-        </div>
+
+        <button class="carousel-btn next-btn" onclick="moveSlide(1)">&#10095;</button>
     </div>
+
+    <!-- Dots Indicator -->
+    <div class="carousel-dots" id="carouselDots"></div>
 </section>
 
 
@@ -190,7 +242,11 @@
                 <h2>Ready for Fresh Laundry?</h2>
                 <p>Let us take laundry off your list</p>
             </div>
-            <a href="#" class="cta-button">BOOK NOW →</a>
+            <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
+                <a href="../customer-dashboard/dashboard.php" class="cta-button">BOOK NOW →</a>
+            <?php else: ?>
+                <a href="../login/login.php" class="cta-button">BOOK NOW →</a>
+            <?php endif; ?>
         </div>
     </div>
 </section>
