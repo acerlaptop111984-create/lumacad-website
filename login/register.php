@@ -1,5 +1,15 @@
 <?php
+require_once '../validation.php';  
 require_once '../database/config.php';
+
+if (isset($_SESSION['user_id'])) {
+    if ($_SESSION['role'] == 'admin') {
+        header("Location: ../admin-dashboard/dashboard.php");
+    } else {
+        header("Location: ../customer-dashboard/dashboard.php");
+    }
+    exit();
+}
 
 $error = '';
 $success = '';
@@ -10,13 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
     
-    // Check if passwords match
     if ($password !== $confirm_password) {
         $error = "Passwords do not match";
     } else {
         $pdo = getConnection();
         
-        // Check if email already exists
         $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $existing = $stmt->fetch();
@@ -24,10 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($existing) {
             $error = "Email already registered. Please use another email.";
         } else {
-            // Hash the password
+
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             
-            // Insert new user
             $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, role) VALUES (?, ?, ?, 'customer')");
             if ($stmt->execute([$full_name, $email, $hashed_password])) {
                 $success = "Registration successful! You can now log in.";
@@ -117,42 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     </main>
 
-    <footer>
-        <div class="footer-container">
-            <div class="footer-brand">
-                <img src="../images/footerlogo-transparent.png" alt="Lumacad Wash & Fold" class="footer-logo">
-                <p>Fresh Laundry. Delivered with care.</p>
-            </div>
-            <div class="footer-links">
-                <h4>Quick Links</h4>
-                <a href="../homepage/index.php">Home</a>
-                <a href="../homepage/index.php#services">Services</a>
-                <a href="../homepage/index.php#about">About</a>
-                <a href="../homepage/pricing.php">Pricing</a>
-                <a href="../homepage/contact.php">Contact</a>
-            </div>
-            <div class="footer-services">
-                <h4>Our Services</h4>
-                <a href="#">Wash & Fold</a>
-                <a href="#">Dry Cleaning</a>
-                <a href="#">Ironing</a>
-            </div>
-            <div class="footer-hours">
-                <h4>Business Hours</h4>
-                <p>Monday - Saturday</p>
-                <p>7:00 AM - 6:00 PM</p>
-            </div>
-            <div class="footer-contact">
-                <h4>Contact Us</h4>
-                <p>09119988776</p>
-                <p>lumacad.wash&fold@gmail.com</p>
-                <p>Dumaguete City, Negros Oriental</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Lumacad Wash & Fold. All Rights Reserved.</p>
-        </div>
-    </footer>
+   
 
     <script src="../js/script.js"></script>
 </body>
