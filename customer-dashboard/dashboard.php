@@ -1,6 +1,17 @@
 <?php
 session_start();
 
+if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
+    header("Location: ../admin-dashboard/dashboard.php");
+    exit();
+}
+
+// Check if ang user is log in 
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login/login.php");
+    exit();
+}
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../login/login.php");
     exit();
@@ -57,6 +68,7 @@ $user_reviews = $stmt->fetchAll();
             <img src="../images/footerlogo-transparent.png" alt="Lumacad" class="brand-logo">
         </div>
         <ul class="menu">
+            <li><a href="../homepage/index.php"><span>Homepage</span></a></li>
             <li class="active"><a href="dashboard.php"><span>Dashboard</span></a></li>
             <li><a href="orders.php"><span>My Orders</span></a></li>
             <li><a href="booking.php"><span>New Booking</span></a></li>
@@ -69,7 +81,7 @@ $user_reviews = $stmt->fetchAll();
     <div class="customer-main">
 
         <div class="welcome-card">
-            <h1> Welcome back, <?php echo htmlspecialchars($user_name); ?>!</h1>
+            <h1> Welcome, <?php echo htmlspecialchars($user_name); ?>!</h1>
             <p>Ready to do your laundry today? Let's get started!</p>
         </div>
 
