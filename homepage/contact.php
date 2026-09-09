@@ -56,7 +56,7 @@ if (isset($_SESSION['user_id'])) {
             $user_email = $user['email'];
         }
     } catch (PDOException $e) {
-        // Log but don't show error to user
+       
         logError('Failed to fetch user details', [
             'user_id' => $_SESSION['user_id'],
             'error' => $e->getMessage()
