@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../validation.php';  
 require_once '../database/config.php';
 
@@ -15,33 +16,46 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $full_name = $_POST['fullname'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
+    $errors = validateRegistrationInput($_POST);
     
-    if ($password !== $confirm_password) {
-        $error = "Passwords do not match";
-    } else {
-        $pdo = getConnection();
+    if (empty($errors)) {
+        $full_name = trim($_POST['fullname']);
+        $email = trim($_POST['email']);
+        $password = $_POST['password'];
+        $confirm_password = $_POST['confirm_password'];
         
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        $existing = $stmt->fetch();
-        
-        if ($existing) {
-            $error = "Email already registered. Please use another email.";
-        } else {
-
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        try {
+            $pdo = getConnection();
             
-            $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, role) VALUES (?, ?, ?, 'customer')");
-            if ($stmt->execute([$full_name, $email, $hashed_password])) {
-                $success = "Registration successful! You can now log in.";
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+            $stmt->execute([$email]);
+            $existing = $stmt->fetch();
+            
+            if ($existing) {
+                $error = "Email already registered. Please use another email.";
             } else {
-                $error = "Registration failed. Please try again.";
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                
+                $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, role) VALUES (?, ?, ?, 'customer')");
+                if ($stmt->execute([$full_name, $email, $hashed_password])) {
+                    $success = "Registration successful! You can now log in.";
+                } else {
+                    $error = "Registration failed. Please try again.";
+                    logError('Registration failed', [
+                        'email' => $email,
+                        'error' => 'Statement execution failed'
+                    ]);
+                }
             }
+        } catch (PDOException $e) {
+            logError('Database error during registration', [
+                'email' => $email,
+                'error' => $e->getMessage()
+            ]);
+            $error = "Unable to register at this time. Please try again later.";
         }
+    } else {
+        $error = implode("<br>", $errors);
     }
 }
 ?>
@@ -94,22 +108,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             <?php endif; ?>
 
-            <form action="" method="POST">
+            <form action="" method="POST" id="registerForm">
                 <div class="form-group">
                     <label for="fullname">Full Name</label>
                     <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Create a password" required>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required minlength="6">
                 </div>
                 <div class="form-group">
                     <label for="confirm_password">Confirm Password</label>
-                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required minlength="6">
                 </div>
                 <button type="submit" class="btn-submit" style="margin-top: 0.5rem;">REGISTER</button>
             </form>
@@ -123,8 +137,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
     </main>
-
-   
 
     <script src="../js/script.js"></script>
 </body>
