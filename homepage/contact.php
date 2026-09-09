@@ -5,7 +5,6 @@ require_once '../database/config.php';
 $message = '';
 $error = '';
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_message'])) {
     $full_name = trim($_POST['full_name']);
     $email = trim($_POST['email']);
@@ -13,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_message'])) {
     $message_text = trim($_POST['message']);
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     
-    // Validation
     $errors = array();
     if (empty($full_name)) $errors[] = "Full name is required.";
     if (empty($email)) $errors[] = "Email address is required.";
@@ -28,16 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_message'])) {
                 $message = "Your message has been sent successfully! We'll get back to you soon.";
             } else {
                 $error = "Failed to send message. Please try again.";
+                logError('Failed to insert message', [
+                    'user_id' => $user_id,
+                    'email' => $email,
+                    'error' => 'Statement execution failed'
+                ]);
             }
         } catch (PDOException $e) {
-            $error = "Database error. Please try again.";
+            logError('Database error in contact form', [
+                'user_id' => $user_id,
+                'email' => $email,
+                'error' => $e->getMessage()
+            ]);
+
+            $error = "Unable to send your message at this time. Please try again later.";
         }
     } else {
         $error = implode("<br>", $errors);
     }
 }
-
-// If user is logged in, pre-fill their details
 if (isset($_SESSION['user_id'])) {
     try {
         $pdo = getConnection();
@@ -49,7 +56,12 @@ if (isset($_SESSION['user_id'])) {
             $user_email = $user['email'];
         }
     } catch (PDOException $e) {
-        // Ignore
+        // Log but don't show error to user
+        logError('Failed to fetch user details', [
+            'user_id' => $_SESSION['user_id'],
+            'error' => $e->getMessage()
+        ]);
+
     }
 }
 ?>
@@ -63,226 +75,7 @@ if (isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="../css/style.css?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <title>Contact - Lumacad Wash & Fold</title>
-    <style>
-        .contact-main .alert {
-            max-width: 900px;
-            margin: 1rem auto;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            font-family: var(--font-body);
-        }
-        .contact-main .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .contact-main .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .contact-main .contact-section {
-            padding: 0 2rem 3rem 2rem;
-        }
-        .contact-main .contact-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            gap: 3rem;
-            align-items: stretch;
-        }
-        .contact-main .contact-form {
-            flex: 2;
-            background: var(--primary-white);
-            padding: 2.5rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid var(--teal-light);
-        }
-        .contact-main .contact-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            justify-content: center;
-        }
-        .contact-main .info-card {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            background: var(--primary-white);
-            padding: 0.8rem 1.2rem;
-            border-radius: 10px;
-            border: 1px solid var(--teal-light);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .contact-main .info-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-        .contact-main .info-icon {
-            font-size: 1.3rem;
-            line-height: 1;
-            flex-shrink: 0;
-            width: 30px;
-            text-align: center;
-        }
-        .contact-main .info-text {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 0.3rem 0.8rem;
-            flex: 1;
-        }
-        .contact-main .info-text h3 {
-            font-size: 0.85rem;
-            color: var(--primary-black);
-            font-family: var(--font-body);
-            font-weight: 600;
-            margin: 0;
-        }
-        .contact-main .info-text h4 {
-            font-size: 0.85rem;
-            color: var(--primary-teal);
-            font-family: var(--font-body);
-            font-weight: 400;
-            margin: 0;
-        }
-        .contact-main .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 0.2rem;
-        }
-        .contact-main .social-link {
-            color: var(--primary-teal);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-family: var(--font-body);
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        .contact-main .social-link:hover {
-            color: var(--teal-dark);
-        }
-        .contact-main .form-group {
-            margin-bottom: 1.2rem;
-        }
-        .contact-main .form-group label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--primary-black);
-            font-family: var(--font-body);
-            margin-bottom: 0.4rem;
-        }
-        .contact-main .form-group input,
-        .contact-main .form-group textarea {
-            width: 100%;
-            padding: 0.8rem 1rem;
-            border: 2px solid var(--teal-light);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: var(--font-body);
-            transition: border-color 0.3s ease;
-            background: var(--primary-white);
-            color: var(--primary-black);
-            box-sizing: border-box;
-        }
-        .contact-main .form-group input:focus,
-        .contact-main .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-teal);
-        }
-        .contact-main .form-group input:disabled {
-            background: #f5f5f5;
-            cursor: not-allowed;
-        }
-        .contact-main .btn-submit {
-            background-color: var(--primary-teal);
-            color: var(--primary-white);
-            border: none;
-            padding: 0.9rem 2.5rem;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: var(--font-body);
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-            margin-top: 0.5rem;
-        }
-        .contact-main .btn-submit:hover {
-            background-color: var(--teal-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 0 20px rgba(31, 101, 112, 0.3);
-        }
-        .contact-main .contact-header {
-            background: var(--teal-light);
-            padding: 110px 2rem 0.5rem 2rem;
-            text-align: center;
-        }
-        .contact-main .contact-header .contact-label {
-            font-size: 0.85rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--primary-teal);
-            font-weight: 600;
-            font-family: var(--font-body);
-        }
-        .contact-main .contact-header h1 {
-            font-size: 2.5rem;
-            color: var(--primary-teal);
-            font-family: var(--font-heading);
-            margin: 0.3rem 0 0.2rem 0;
-        }
-        .contact-main .contact-header p {
-            font-size: 1rem;
-            color: var(--gray-medium);
-            font-family: var(--font-body);
-            max-width: 600px;
-            margin: 0 auto 0.5rem auto;
-        }
-        .contact-main .form-row {
-            display: flex;
-            gap: 1.5rem;
-        }
-        .contact-main .form-row .form-group {
-            flex: 1;
-        }
-        @media (max-width: 768px) {
-            .contact-main .contact-container {
-                flex-direction: column;
-            }
-            .contact-main .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            .contact-main .contact-header {
-                padding: 100px 1rem 0.5rem 1rem;
-            }
-            .contact-main .contact-section {
-                padding: 0 1rem 2rem 1rem;
-            }
-            .contact-main .contact-form {
-                padding: 1.5rem;
-            }
-            header {
-                padding: 0.8rem 1rem;
-            }
-            nav {
-                position: static;
-                transform: none;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .book-now {
-                padding: 0.5rem 1rem;
-                font-size: 0.8rem;
-            }
-        }
-    </style>
+   
 </head>
 
 <body>
@@ -323,7 +116,7 @@ if (isset($_SESSION['user_id'])) {
 
         <section class="contact-section">
             <div class="contact-container">
-                <!-- Contact Form -->
+                
                 <div class="contact-form">
                     <form action="" method="POST">
                         <div class="form-row">
