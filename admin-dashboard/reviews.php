@@ -44,7 +44,6 @@ if (isset($_GET['delete_review']) && isset($_GET['review_id'])) {
             <img src="../images/footerlogo-transparent.png" alt="Lumacad" class="brand-logo">
         </div>
          <ul class="menu">
-            <li><a href="../homepage/index.php"><span>Homepage</span></a></li>
             <li><a href="dashboard.php"><span>Dashboard</span></a></li>
             <li><a href="orders.php"><span>Orders</span></a></li>
             <li><a href="customers.php"><span>Customers</span></a></li>
