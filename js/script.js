@@ -126,3 +126,49 @@ if (slides.length > 0) {
         updateCarousel();
     });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Fade in effect for all pages
+    const main = document.querySelector('main, .customer-main, .contact-main, .pricing-main');
+    if (main) {
+        main.style.opacity = '0';
+        main.style.transform = 'translateY(10px)';
+        setTimeout(function () {
+            main.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            main.style.opacity = '1';
+            main.style.transform = 'translateY(0)';
+        }, 50);
+    }
+
+
+});
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebarNav');
+    const overlay = document.querySelector('.sidebar-overlay');
+
+    if (sidebar) {
+        sidebar.classList.toggle('active');
+    }
+    if (overlay) {
+        overlay.classList.toggle('active');
+    }
+    document.body.classList.toggle('sidebar-open');
+
+    if (document.body.classList.contains('sidebar-open')) {
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+    } else {
+        document.body.style.position = '';
+        document.body.style.width = '';
+    }
+}
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        const sidebar = document.getElementById('sidebarNav');
+        if (sidebar && sidebar.classList.contains('active')) {
+            toggleSidebar();
+        }
+    }
+});
