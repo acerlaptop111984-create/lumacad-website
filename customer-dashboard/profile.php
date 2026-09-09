@@ -12,11 +12,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../login/login.php");
-    exit();
-}
-
 if ($_SESSION['role'] == 'admin') {
     header("Location: ../admin-dashboard/dashboard.php");
     exit();
@@ -35,19 +30,38 @@ $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
-    $full_name = $_POST['full_name'];
-    $contact_number = $_POST['contact_number'];
-    $address = $_POST['address'];
+
+    $errors = validateProfileInput($_POST);
     
-    $stmt = $pdo->prepare("UPDATE users SET full_name = ?, contact_number = ?, address = ? WHERE user_id = ?");
-    if ($stmt->execute([$full_name, $contact_number, $address, $user_id])) {
-        $_SESSION['user_name'] = $full_name;
-        $message = 'Profile updated successfully!';
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
-        $stmt->execute([$user_id]);
-        $user = $stmt->fetch();
+    if (empty($errors)) {
+        $full_name = $_POST['full_name'];
+        $contact_number = $_POST['contact_number'];
+        $address = $_POST['address'];
+        
+        try {
+            $stmt = $pdo->prepare("UPDATE users SET full_name = ?, contact_number = ?, address = ? WHERE user_id = ?");
+            if ($stmt->execute([$full_name, $contact_number, $address, $user_id])) {
+                $_SESSION['user_name'] = $full_name;
+                $message = 'Profile updated successfully!';
+               
+                $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
+                $stmt->execute([$user_id]);
+                $user = $stmt->fetch();
+            } else {
+                $error = 'Failed to update profile.';
+                logError('Profile update failed', [
+                    'user_id' => $user_id
+                ]);
+            }
+        } catch (PDOException $e) {
+            logError('Database error during profile update', [
+                'user_id' => $user_id,
+                'error' => $e->getMessage()
+            ]);
+            $error = 'Unable to update profile. Please try again later.';
+        }
     } else {
-        $error = 'Failed to update profile.';
+        $error = implode("<br>", $errors);
     }
 }
 ?>
@@ -81,6 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
             width: 100%;
             max-width: 600px;
             text-align: center;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
     </style>
 </head>
@@ -129,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
                 </div>
                 <div class="form-group">
                     <label for="contact_number">Contact Number</label>
-                    <input type="text" id="contact_number" name="contact_number" value="<?php echo htmlspecialchars($user['contact_number']); ?>">
+                    <input type="text" id="contact_number" name="contact_number" value="<?php echo htmlspecialchars($user['contact_number']); ?>" pattern="[0-9]{10,11}" title="Please enter a valid phone number (10-11 digits)">
                 </div>
                 <div class="form-group">
                     <label for="address">Address</label>
