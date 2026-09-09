@@ -20,29 +20,62 @@ $pdo = getConnection();
 $message = '';
 $error = '';
 
-$services = $pdo->query("SELECT * FROM services ORDER BY service_name")->fetchAll();
+try {
+    $services = $pdo->query("SELECT * FROM services ORDER BY service_name")->fetchAll();
+} catch (PDOException $e) {
+    logError('Failed to fetch services', [
+        'error' => $e->getMessage()
+    ]);
+    $services = [];
+    $error = "Unable to load services. Please try again later.";
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_booking'])) {
-    $service_type = $_POST['service_type'];
-    $weight = $_POST['weight'];
-    $pickup_address = trim($_POST['pickup_address']);
-    $payment_method = $_POST['payment_method'];
-    $special_instructions = trim($_POST['special_instructions']);
     
-    $stmt = $pdo->prepare("SELECT price_per_kg FROM services WHERE service_name = ?");
-    $stmt->execute([$service_type]);
-    $service = $stmt->fetch();
-    $price_per_kg = $service ? $service['price_per_kg'] : 0;
-    $total_price = $price_per_kg * $weight;
+    $service_type = trim($_POST['service_type'] ?? '');
+    $weight = trim($_POST['weight'] ?? '');
+    $pickup_address = trim($_POST['pickup_address'] ?? '');
+    $payment_method = trim($_POST['payment_method'] ?? '');
+    $special_instructions = trim($_POST['special_instructions'] ?? '');
     
-    $order_number = 'ORD-' . date('Ymd') . '-' . rand(1000, 9999);
+    $validation_errors = [];
+    if (empty($service_type)) $validation_errors[] = "Please select a service.";
+    if (empty($weight) || !is_numeric($weight) || $weight <= 0) $validation_errors[] = "Please enter a valid weight.";
+    if (empty($pickup_address)) $validation_errors[] = "Please enter a pickup address.";
+    if (empty($payment_method)) $validation_errors[] = "Please select a payment method.";
     
-    $stmt = $pdo->prepare("INSERT INTO orders (user_id, order_number, service_type, weight, total_price, pickup_address, payment_method, special_instructions, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
-    
-    if ($stmt->execute([$user_id, $order_number, $service_type, $weight, $total_price, $pickup_address, $payment_method, $special_instructions])) {
-        $message = 'Booking submitted successfully! Your order number is: ' . $order_number;
+    if (empty($validation_errors)) {
+        try {
+            $stmt = $pdo->prepare("SELECT price_per_kg FROM services WHERE service_name = ?");
+            $stmt->execute([$service_type]);
+            $service = $stmt->fetch();
+            $price_per_kg = $service ? $service['price_per_kg'] : 0;
+            $total_price = $price_per_kg * $weight;
+            
+            $order_number = 'ORD-' . date('Ymd') . '-' . rand(1000, 9999);
+            
+            $stmt = $pdo->prepare("INSERT INTO orders (user_id, order_number, service_type, weight, total_price, pickup_address, payment_method, special_instructions, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
+            
+            if ($stmt->execute([$user_id, $order_number, $service_type, $weight, $total_price, $pickup_address, $payment_method, $special_instructions])) {
+                $message = 'Booking submitted successfully! Your order number is: ' . $order_number;
+            } else {
+                $error = 'Failed to submit booking. Please try again.';
+                logError('Booking submission failed', [
+                    'user_id' => $user_id,
+                    'order_number' => $order_number,
+                    'service_type' => $service_type
+                ]);
+            }
+        } catch (PDOException $e) {
+            logError('Database error during booking', [
+                'user_id' => $user_id,
+                'service_type' => $service_type,
+                'error' => $e->getMessage()
+            ]);
+            $error = 'Unable to process your booking. Please try again later.';
+        }
     } else {
-        $error = 'Failed to submit booking. Please try again.';
+        $error = implode("<br>", $validation_errors);
     }
 }
 ?>
@@ -76,6 +109,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_booking'])) {
             width: 100%;
             max-width: 700px;
             text-align: center;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
     </style>
 </head>
@@ -114,7 +152,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_booking'])) {
             <div class="alert alert-error">Error: <?php echo $error; ?></div>
         <?php endif; ?>
 
-        <?php if (!$message): ?>
+        <?php if (!$message && empty($services)): ?>
+            <div class="alert alert-error">No services available at the moment. Please check back later.</div>
+        <?php elseif (!$message): ?>
             <div class="booking-form">
                 <form action="" method="POST">
 
