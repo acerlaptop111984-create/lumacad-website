@@ -15,6 +15,8 @@ $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
 
 require_once '../database/config.php';
+require_once '../validation.php';  // ADD THIS
+
 $pdo = getConnection();
 
 $message = '';
@@ -31,20 +33,15 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_booking'])) {
+    $errors = validateBookingInput($_POST);
     
-    $service_type = trim($_POST['service_type'] ?? '');
-    $weight = trim($_POST['weight'] ?? '');
-    $pickup_address = trim($_POST['pickup_address'] ?? '');
-    $payment_method = trim($_POST['payment_method'] ?? '');
-    $special_instructions = trim($_POST['special_instructions'] ?? '');
-    
-    $validation_errors = [];
-    if (empty($service_type)) $validation_errors[] = "Please select a service.";
-    if (empty($weight) || !is_numeric($weight) || $weight <= 0) $validation_errors[] = "Please enter a valid weight.";
-    if (empty($pickup_address)) $validation_errors[] = "Please enter a pickup address.";
-    if (empty($payment_method)) $validation_errors[] = "Please select a payment method.";
-    
-    if (empty($validation_errors)) {
+    if (empty($errors)) {
+        $service_type = trim($_POST['service_type']);
+        $weight = trim($_POST['weight']);
+        $pickup_address = trim($_POST['pickup_address']);
+        $payment_method = trim($_POST['payment_method']);
+        $special_instructions = trim($_POST['special_instructions']);
+        
         try {
             $stmt = $pdo->prepare("SELECT price_per_kg FROM services WHERE service_name = ?");
             $stmt->execute([$service_type]);
@@ -75,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_booking'])) {
             $error = 'Unable to process your booking. Please try again later.';
         }
     } else {
-        $error = implode("<br>", $validation_errors);
+        $error = implode("<br>", $errors);
     }
 }
 ?>
@@ -156,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_booking'])) {
             <div class="alert alert-error">No services available at the moment. Please check back later.</div>
         <?php elseif (!$message): ?>
             <div class="booking-form">
-                <form action="" method="POST">
+                <form action="" method="POST" id="bookingForm">
 
                     <div class="form-row">
                         <div class="form-group">
