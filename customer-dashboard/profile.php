@@ -2,7 +2,6 @@
 session_start();
 require_once '../validation.php';  
 
-// If admin tries to access customer dashboard, redirect to admin dashboard
 if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin') {
     header("Location: ../admin-dashboard/dashboard.php");
     exit();
@@ -44,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
     if ($stmt->execute([$full_name, $contact_number, $address, $user_id])) {
         $_SESSION['user_name'] = $full_name;
         $message = 'Profile updated successfully!';
-        // Refresh user data
         $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
         $stmt->execute([$user_id]);
         $user = $stmt->fetch();
