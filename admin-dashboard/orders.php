@@ -18,11 +18,25 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
 
 $sql = "SELECT o.*, u.full_name FROM orders o LEFT JOIN users u ON o.user_id = u.user_id";
 if ($filter != 'all') {
-    $sql .= " WHERE o.status = '$filter'";
+    $sql .= " WHERE o.status = ?";
 }
 $sql .= " ORDER BY o.created_at DESC";
 
-$orders = $pdo->query($sql)->fetchAll();
+try {
+    $stmt = $pdo->prepare($sql);
+    if ($filter != 'all') {
+        $stmt->execute([$filter]);
+    } else {
+        $stmt->execute();
+    }
+    $orders = $stmt->fetchAll();
+} catch (PDOException $e) {
+    logError('Failed to fetch orders', [
+        'filter' => $filter,
+        'error' => $e->getMessage()
+    ]);
+    $orders = [];
+}
 
 $total_orders = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
 $pending_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pending'")->fetchColumn();
@@ -34,18 +48,40 @@ $cancelled_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'can
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
     $order_id = $_POST['order_id'];
     $new_status = $_POST['new_status'];
-    $stmt = $pdo->prepare("UPDATE orders SET status = ? WHERE order_id = ?");
-    $stmt->execute([$new_status, $order_id]);
-    header("Location: orders.php?updated=1");
-    exit();
+    
+    if (!empty($new_status)) {
+        try {
+            $stmt = $pdo->prepare("UPDATE orders SET status = ? WHERE order_id = ?");
+            $stmt->execute([$new_status, $order_id]);
+            header("Location: orders.php?updated=1");
+            exit();
+        } catch (PDOException $e) {
+            logError('Failed to update order status', [
+                'order_id' => $order_id,
+                'new_status' => $new_status,
+                'error' => $e->getMessage()
+            ]);
+            header("Location: orders.php?error=1");
+            exit();
+        }
+    }
 }
 
 if (isset($_GET['delete_order']) && isset($_GET['order_id'])) {
     $order_id = $_GET['order_id'];
-    $stmt = $pdo->prepare("DELETE FROM orders WHERE order_id = ?");
-    $stmt->execute([$order_id]);
-    header("Location: orders.php?deleted=1");
-    exit();
+    try {
+        $stmt = $pdo->prepare("DELETE FROM orders WHERE order_id = ?");
+        $stmt->execute([$order_id]);
+        header("Location: orders.php?deleted=1");
+        exit();
+    } catch (PDOException $e) {
+        logError('Failed to delete order', [
+            'order_id' => $order_id,
+            'error' => $e->getMessage()
+        ]);
+        header("Location: orders.php?error=1");
+        exit();
+    }
 }
 ?>
 
@@ -59,6 +95,13 @@ if (isset($_GET['delete_order']) && isset($_GET['order_id'])) {
     <link rel="stylesheet" href="../css/admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <title>Manage Orders - Lumacad</title>
+    <style>
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
 </head>
 
 <body>
@@ -96,6 +139,10 @@ if (isset($_GET['delete_order']) && isset($_GET['order_id'])) {
 
         <?php if (isset($_GET['deleted'])): ?>
             <div class="alert alert-success"> Order deleted successfully!</div>
+        <?php endif; ?>
+
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-error"> An error occurred. Please try again.</div>
         <?php endif; ?>
 
         <div class="filter-tabs">
