@@ -1,5 +1,20 @@
 <?php
 
+function logError($message, $context = []) {
+    $logFile = __DIR__ . '/../logs/error.log';
+    $logDir = dirname($logFile);
+    
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0777, true);
+    }
+    
+    $timestamp = date('Y-m-d H:i:s');
+    $contextStr = !empty($context) ? ' | Context: ' . json_encode($context) : '';
+    $logMessage = "[$timestamp] $message$contextStr" . PHP_EOL;
+    
+    error_log($logMessage, 3, $logFile);
+}
+
 function getConnection(): PDO
 {
     $host = 'localhost';
@@ -16,7 +31,14 @@ function getConnection(): PDO
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     } catch (PDOException $e) {
-        die("Connection failed: " . $e->getMessage());
+      
+        logError('Database connection failed', [
+            'error' => $e->getMessage(),
+            'host' => $host,
+            'db' => $db
+        ]);
+        
+        die("We're experiencing technical difficulties. Please try again later.");
     }
 }
 ?>
