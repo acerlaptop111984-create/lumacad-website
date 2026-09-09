@@ -1,6 +1,3 @@
-<?php
-session_start();
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,11 +25,7 @@ session_start();
     <a href="contact.php">CONTACT</a>
 </nav>
 
-    <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
-        <a href="../customer-dashboard/dashboard.php" class="book-now">BOOK NOW</a>
-    <?php else: ?>
-        <a href="../login/login.php" class="book-now">BOOK NOW</a>
-    <?php endif; ?>
+    <a href="../login/login.php" class="book-now">BOOK NOW</a>
 </header>
 
        <main class="fade-in">
@@ -45,11 +38,7 @@ session_start();
         <h2>WASH LESS<br>LIVE <span class="highlight">MORE.</span></h2>
         <p>Spend less time doing laundry and more time doing what <br>matters most. We provide professional wash and fold <br>services with care, quality, and convenience in every load.</p>
         <div>
-    <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
-        <a href="../customer-dashboard/dashboard.php" class="btn-primary">BOOK NOW</a>
-    <?php else: ?>
-        <a href="../login/login.php" class="btn-primary">BOOK NOW</a>
-    <?php endif; ?>
+    <a href="../login/login.php" class="btn-primary">BOOK NOW</a>
     <a href="#services" class="btn-secondary">VIEW SERVICES</a>
 </div>  
     </div>
@@ -165,7 +154,6 @@ session_start();
 </section>
 
 
-<!-- TESTIMONIALS CAROUSEL SECTION -->
 <section class="testimonials-carousel">
     <span class="testimonials-label">TESTIMONIALS</span>
     <h2>What Our Customers Say</h2>
@@ -227,7 +215,6 @@ session_start();
         <button class="carousel-btn next-btn" onclick="moveSlide(1)">&#10095;</button>
     </div>
 
-    <!-- Dots Indicator -->
     <div class="carousel-dots" id="carouselDots"></div>
 </section>
 
@@ -242,11 +229,7 @@ session_start();
                 <h2>Ready for Fresh Laundry?</h2>
                 <p>Let us take laundry off your list</p>
             </div>
-            <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
-                <a href="../customer-dashboard/dashboard.php" class="cta-button">BOOK NOW →</a>
-            <?php else: ?>
-                <a href="../login/login.php" class="cta-button">BOOK NOW →</a>
-            <?php endif; ?>
+            <a href="../login/login.php" class="cta-button">BOOK NOW →</a>
         </div>
     </div>
 </section>
