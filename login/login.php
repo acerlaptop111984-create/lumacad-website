@@ -6,7 +6,7 @@ if (isset($_SESSION['user_id'])) {
     if ($_SESSION['role'] == 'admin') {
         header("Location: ../admin-dashboard/dashboard.php");
     } else {
-        header("Location: ../customer-dashboard/dashboard.php");
+        header("Location: ../homepage/index.php");
     }
     exit();
 }
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($user['role'] == 'admin') {
                 header("Location: ../admin-dashboard/dashboard.php");
             } else {
-                header("Location: ../customer-dashboard/dashboard.php");
+                header("Location: ../homepage/index.php");
             }
             exit();
         } else {
@@ -67,11 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <a href="../homepage/pricing.php">PRICING</a>
             <a href="../homepage/contact.php">CONTACT</a>
         </nav>
-        <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
-            <a href="../customer-dashboard/dashboard.php" class="book-now">BOOK NOW</a>
-        <?php else: ?>
+
+        <div class="header-right">
             <a href="#" class="book-now" onclick="alert('Please log in first'); return false;">BOOK NOW</a>
-        <?php endif; ?>
+        </div>
     </header>
 
     <main style="background: var(--teal-light); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; padding-top: 80px;">
