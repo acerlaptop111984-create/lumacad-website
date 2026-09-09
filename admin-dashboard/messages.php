@@ -14,30 +14,53 @@ if ($_SESSION['role'] != 'admin') {
 require_once '../database/config.php';
 $pdo = getConnection();
 
-// Update message status
 if (isset($_GET['mark_read']) && isset($_GET['message_id'])) {
     $message_id = $_GET['message_id'];
-    $stmt = $pdo->prepare("UPDATE messages SET status = 'read' WHERE message_id = ?");
-    $stmt->execute([$message_id]);
-    header("Location: messages.php?updated=1");
-    exit();
+    try {
+        $stmt = $pdo->prepare("UPDATE messages SET status = 'read' WHERE message_id = ?");
+        $stmt->execute([$message_id]);
+        header("Location: messages.php?updated=1");
+        exit();
+    } catch (PDOException $e) {
+        logError('Failed to mark message as read', [
+            'message_id' => $message_id,
+            'error' => $e->getMessage()
+        ]);
+        header("Location: messages.php?error=1");
+        exit();
+    }
 }
 
-// Delete message
 if (isset($_GET['delete_message']) && isset($_GET['message_id'])) {
     $message_id = $_GET['message_id'];
-    $stmt = $pdo->prepare("DELETE FROM messages WHERE message_id = ?");
-    $stmt->execute([$message_id]);
-    header("Location: messages.php?deleted=1");
-    exit();
+    try {
+        $stmt = $pdo->prepare("DELETE FROM messages WHERE message_id = ?");
+        $stmt->execute([$message_id]);
+        header("Location: messages.php?deleted=1");
+        exit();
+    } catch (PDOException $e) {
+        logError('Failed to delete message', [
+            'message_id' => $message_id,
+            'error' => $e->getMessage()
+        ]);
+        header("Location: messages.php?error=1");
+        exit();
+    }
 }
 
-// Get all messages
-$messages = $pdo->query("SELECT m.*, u.full_name as user_name FROM messages m 
-                          LEFT JOIN users u ON m.user_id = u.user_id 
-                          ORDER BY m.created_at DESC")->fetchAll();
-
-$unread_count = $pdo->query("SELECT COUNT(*) FROM messages WHERE status = 'unread'")->fetchColumn();
+try {
+    $messages = $pdo->query("SELECT m.*, u.full_name as user_name FROM messages m 
+                              LEFT JOIN users u ON m.user_id = u.user_id 
+                              ORDER BY m.created_at DESC")->fetchAll();
+    
+    $unread_count = $pdo->query("SELECT COUNT(*) FROM messages WHERE status = 'unread'")->fetchColumn();
+} catch (PDOException $e) {
+    logError('Failed to fetch messages', [
+        'error' => $e->getMessage()
+    ]);
+    $messages = [];
+    $unread_count = 0;
+}
 ?>
 
 <!DOCTYPE html>
@@ -91,6 +114,11 @@ $unread_count = $pdo->query("SELECT COUNT(*) FROM messages WHERE status = 'unrea
         .action-mark-read:hover {
             text-decoration: underline;
         }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 
@@ -131,6 +159,10 @@ $unread_count = $pdo->query("SELECT COUNT(*) FROM messages WHERE status = 'unrea
 
         <?php if (isset($_GET['deleted'])): ?>
             <div class="alert alert-success">Message deleted successfully!</div>
+        <?php endif; ?>
+
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-error">An error occurred. Please try again.</div>
         <?php endif; ?>
 
         <div class="admin-table-wrap">
