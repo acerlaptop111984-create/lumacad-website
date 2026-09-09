@@ -578,3 +578,19 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* ========================================
+   FIXES FOR ADMIN DASHBOARD
+   ======================================== */
+
+/* Prevent horizontal scroll */
+html,
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.admin-main {
+    overflow-x: hidden;
+    width: 100%;
+}
