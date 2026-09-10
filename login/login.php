@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div style="background: var(--primary-white); padding: 3rem 2.5rem; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); max-width: 450px; width: 100%;">
 
             <div style="text-align: center; margin-bottom: 2rem;">
-                <h1 style="font-family: var(--font-heading); font-size: 2rem; color: var(--primary-teal); margin-bottom: 0.3rem;">Welcome Back</h1>
+                <h1 style="font-family: var(--font-heading); font-size: 2rem; color: var(--primary-teal); margin-bottom: 0.3rem;">Welcome </h1>
                 <p style="color: var(--gray-medium); font-family: var(--font-body); font-size: 0.95rem;">Log in to your account</p>
             </div>
 
