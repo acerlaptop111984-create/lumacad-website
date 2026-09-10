@@ -77,11 +77,15 @@
     padding-top: 1.5rem;
 }
 
+
 .admin-main {
     margin-left: 250px;
     padding: 100px 2rem 3rem 2rem;
     background: var(--teal-light);
     min-height: 100vh;
+    width: calc(100% - 250px);
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .admin-main .page-header {
@@ -90,6 +94,7 @@
     align-items: center;
     margin-bottom: 2rem;
     flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .admin-main .page-header h1 {
@@ -119,11 +124,13 @@
     font-weight: 600;
     font-size: 0.9rem;
     transition: background 0.3s ease;
+    white-space: nowrap;
 }
 
 .admin-main .page-header .btn-add:hover {
     background: var(--teal-dark);
 }
+
 
 .admin-stats {
     display: grid;
@@ -190,12 +197,15 @@
     color: #e84393;
 }
 
+
 .admin-table-wrap {
     background: var(--primary-white);
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
     overflow-x: auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .admin-table-wrap .table-header {
@@ -204,6 +214,7 @@
     align-items: center;
     margin-bottom: 1rem;
     flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .admin-table-wrap .table-header h3 {
@@ -218,6 +229,7 @@
     font-family: var(--font-body);
     font-weight: 600;
     font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 .admin-table-wrap .btn-view-all:hover {
@@ -237,11 +249,13 @@
     background: var(--teal-light);
     font-weight: 600;
     color: var(--primary-black);
+    white-space: nowrap;
 }
 
 .admin-table td {
     padding: 0.7rem 0.5rem;
     border-bottom: 1px solid var(--teal-light);
+    vertical-align: middle;
 }
 
 .admin-table .status {
@@ -251,6 +265,7 @@
     font-weight: 600;
     color: white;
     display: inline-block;
+    white-space: nowrap;
 }
 
 .admin-table .status.pending {
@@ -273,21 +288,25 @@
     background: #e74c3c;
 }
 
-.admin-table .action-view {
-    color: var(--primary-teal);
+.admin-table .action-view,
+.admin-table .action-edit {
     text-decoration: none;
     margin-right: 0.5rem;
+    white-space: nowrap;
+}
+
+.admin-table .action-view {
+    color: var(--primary-teal);
 }
 
 .admin-table .action-edit {
     color: var(--gray-medium);
-    text-decoration: none;
-    margin-right: 0.5rem;
 }
 
 .admin-table .action-delete {
     color: #e74c3c;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .admin-table .empty {
@@ -296,6 +315,10 @@
     font-family: var(--font-body);
     padding: 1.5rem 0;
 }
+
+/* ========================================
+   FILTER TABS
+   ======================================== */
 
 .filter-tabs {
     display: flex;
@@ -315,6 +338,7 @@
     color: var(--gray-medium);
     transition: all 0.3s ease;
     border: 1px solid var(--teal-light);
+    white-space: nowrap;
 }
 
 .filter-tab:hover {
@@ -326,6 +350,7 @@
     color: white;
     border-color: var(--primary-teal);
 }
+
 
 .alert {
     padding: 0.8rem 1rem;
@@ -347,6 +372,7 @@
     border: 1px solid #f5c6cb;
 }
 
+
 .admin-form {
     background: var(--primary-white);
     padding: 1.5rem;
@@ -364,10 +390,12 @@
 .admin-form .form-row {
     display: flex;
     gap: 1.5rem;
+    flex-wrap: wrap;
 }
 
 .admin-form .form-group {
     flex: 1;
+    min-width: 200px;
     margin-bottom: 1rem;
 }
 
@@ -416,6 +444,10 @@
 .admin-form .btn-submit:hover {
     background: var(--teal-dark);
 }
+
+/* ========================================
+   EDIT SERVICE FORM
+   ======================================== */
 
 .edit-service-form {
     max-width: 600px;
@@ -491,6 +523,7 @@
     background: #5a6268;
 }
 
+
 .add-order-form {
     background: var(--primary-white);
     padding: 2rem;
@@ -502,10 +535,12 @@
 .add-order-form .form-row {
     display: flex;
     gap: 1.5rem;
+    flex-wrap: wrap;
 }
 
 .add-order-form .form-group {
     flex: 1;
+    min-width: 200px;
     margin-bottom: 1.2rem;
 }
 
@@ -557,6 +592,7 @@
     background: var(--teal-dark);
 }
 
+
 .customer-orders-count {
     background: var(--teal-light);
     padding: 0.2rem 0.6rem;
@@ -577,20 +613,4 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-/* ========================================
-   FIXES FOR ADMIN DASHBOARD
-   ======================================== */
-
-/* Prevent horizontal scroll */
-html,
-body {
-    overflow-x: hidden;
-    width: 100%;
-}
-
-.admin-main {
-    overflow-x: hidden;
-    width: 100%;
 }
