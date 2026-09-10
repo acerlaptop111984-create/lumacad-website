@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = validateRegistrationInput($_POST);
     
     if (empty($errors)) {
-        $full_name = trim($_POST['fullname']);
+        $full_name = trim($_POST['full_name']);
         $email = trim($_POST['email']);
         $password = $_POST['password'];
         $confirm_password = $_POST['confirm_password'];
@@ -113,8 +113,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <form action="" method="POST" id="registerForm">
                 <div class="form-group">
-                    <label for="fullname">Full Name</label>
-                    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+                    <label for="full_name">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
