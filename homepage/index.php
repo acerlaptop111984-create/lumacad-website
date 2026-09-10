@@ -15,6 +15,7 @@ session_start();
 
 <body>
 
+
     <header>
         <div class="logo">
             <img src="../images/logo-transparent.png" alt="Lumacad Wash & Fold">
@@ -404,9 +405,9 @@ session_start();
                 </div>
                 <div class="footer-services">
                     <h4>Our Services</h4>
-                    <a href="#">Wash & Fold</a>
-                    <a href="#">Dry Cleaning</a>
-                    <a href="#">Ironing</a>
+                    <a href="#services">Wash & Fold</a>
+                    <a href="#services">Dry Cleaning</a>
+                    <a href="#services">Ironing</a>
                 </div>
                 <div class="footer-hours">
                     <h4>Business Hours</h4>

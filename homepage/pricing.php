@@ -52,7 +52,6 @@ session_start();
         
         <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
             <div class="sidebar-user-welcome">
-                <div class="user-avatar">👤</div>
                 <div>
                     <span class="user-name"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
                     <span class="user-role">Customer</span>
@@ -313,9 +312,9 @@ session_start();
             </div>
             <div class="footer-services">
                 <h4>Our Services</h4>
-                <a href="#">Wash & Fold</a>
-                <a href="#">Dry Cleaning</a>
-                <a href="#">Ironing</a>
+                <a href="index.php#services">Wash & Fold</a>
+                <a href="index.php#services">Dry Cleaning</a>
+                <a href="index.php#services">Ironing</a>
             </div>
             <div class="footer-hours">
                 <h4>Business Hours</h4>

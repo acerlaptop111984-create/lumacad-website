@@ -311,7 +311,6 @@ if (isset($_SESSION['user_id'])) {
     <ul class="sidebar-menu">
         <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] != 'admin'): ?>
             <div class="sidebar-user-welcome">
-                <div class="user-avatar">👤</div>
                 <div>
                     <span class="user-name"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
                     <span class="user-role">Customer</span>
@@ -321,10 +320,10 @@ if (isset($_SESSION['user_id'])) {
             <li><a href="../customer-dashboard/dashboard.php"><span class="menu-text">Dashboard</span><span class="menu-arrow">→</span></a></li>
             <li><a href="../customer-dashboard/orders.php"><span class="menu-text">My Orders</span><span class="menu-arrow">→</span></a></li>
             <li><a href="../customer-dashboard/booking.php"><span class="menu-text">New Booking</span><span class="menu-arrow">→</span></a></li>
-            <li><a href="../customer-dashboard/reviews.php">><span class="menu-text">My Reviews</span><span class="menu-arrow">→</span></a></li>
+            <li><a href="../customer-dashboard/reviews.php"><span class="menu-text">My Reviews</span><span class="menu-arrow">→</span></a></li>
             <li><a href="../customer-dashboard/profile.php"><span class="menu-text">My Profile</span><span class="menu-arrow">→</span></a></li>
             <li class="sidebar-divider"></li>
-            <li><a href="../logout/logout.php" class="sidebar-logout">><span class="menu-text">Logout</span><span class="menu-arrow">→</span></a></li>
+            <li><a href="../logout/logout.php" class="sidebar-logout"><span class="menu-text">Logout</span><span class="menu-arrow">→</span></a></li>
         <?php elseif (isset($_SESSION['user_id']) && $_SESSION['role'] == 'admin'): ?>
             <div class="sidebar-user-welcome">
                 
@@ -469,9 +468,9 @@ if (isset($_SESSION['user_id'])) {
             </div>
             <div class="footer-services">
                 <h4>Our Services</h4>
-                <a href="#">Wash & Fold</a>
-                <a href="#">Dry Cleaning</a>
-                <a href="#">Ironing</a>
+                <a href="index.php#services">Wash & Fold</a>
+                <a href="index.php#services">Dry Cleaning</a>
+                <a href="index.php#services">Ironing</a>
             </div>
             <div class="footer-hours">
                 <h4>Business Hours</h4>
