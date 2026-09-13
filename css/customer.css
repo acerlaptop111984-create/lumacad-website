@@ -11,6 +11,10 @@
     z-index: 999;
 }
 
+html {
+    overflow-y: scroll;
+}
+
 .customer-sidebar .brand {
     text-align: center;
     padding: 1.5rem 1rem;
@@ -771,9 +775,6 @@
     background: var(--teal-dark);
 }
 
-/* ========================================
-   CUSTOMER DASHBOARD - NO SIDEBAR
-   ======================================== */
 
 .customer-main {
     margin-left: 0 !important;
@@ -788,14 +789,12 @@
     width: 100%;
 }
 
-/* Hide old customer sidebar */
+
 .customer-sidebar {
     display: none !important;
 }
 
-/* ========================================
-   CUSTOMER DASHBOARD - FIX HEADER OVERLAP
-   ======================================== */
+
 
 .customer-main {
     margin-left: 0 !important;
@@ -811,12 +810,10 @@
     width: 100%;
 }
 
-/* Hide old customer sidebar */
 .customer-sidebar {
     display: none !important;
 }
 
-/* Fix page header spacing */
 .customer-main .page-header {
     margin-top: 0;
     margin-bottom: 2rem;
@@ -835,11 +832,7 @@
     margin-top: 0.2rem;
 }
 
-/* ========================================
-   FIXES FOR CUSTOMER DASHBOARD
-   ======================================== */
 
-/* Prevent horizontal scroll */
 .customer-main {
     overflow-x: hidden;
     width: 100%;
@@ -855,12 +848,12 @@
     width: 100%;
 }
 
-/* Hide old customer sidebar */
+
 .customer-sidebar {
     display: none !important;
 }
 
-/* Fix page header */
+
 .customer-main .page-header {
     margin-top: 0;
     margin-bottom: 2rem;
@@ -879,7 +872,6 @@
     margin-top: 0.2rem;
 }
 
-/* Fix stat cards */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -925,4 +917,21 @@
 
 .stat-card.green .stat-number {
     color: #2ecc71;
+}
+
+.btn-receipt {
+    background: var(--primary-teal);
+    color: white;
+    padding: 0.3rem 1rem;
+    border-radius: 30px;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    display: inline-block;
+}
+
+.btn-receipt:hover {
+    background: var(--teal-dark);
 }
