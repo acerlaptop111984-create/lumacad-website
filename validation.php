@@ -1,4 +1,4 @@
-<?php
+                                                                <?php
 
 function validateRequired(string $value, string $label): ?string
 {
