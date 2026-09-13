@@ -187,7 +187,7 @@ $user_reviews = $stmt->fetchAll();
                     <?php foreach ($recent_orders as $order): ?>
                         <div class="order-item">
                             <div class="order-info">
-                                <span class="order-number">#<?php echo str_pad($order['order_id'], 4, '0', STR_PAD_LEFT); ?></span>
+                                <span class="order-number">#<?php echo str_pad($order['customer_order_number'], 4, '0', STR_PAD_LEFT); ?></span>
                                 <span><?php echo htmlspecialchars($order['service_type']); ?></span>
                                 <span><?php echo $order['weight']; ?> kg</span>
                                 <span>₱<?php echo number_format($order['total_price'], 2); ?></span>

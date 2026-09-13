@@ -179,7 +179,7 @@ $completed_orders = $stmt->fetchColumn();
                         <div class="order-card">
                             <div class="order-card-header">
                                 <div>
-                                    <span class="order-number">#<?php echo str_pad($order['order_id'], 4, '0', STR_PAD_LEFT); ?></span>
+                                    <span class="order-number">#<?php echo str_pad($order['customer_order_number'], 4, '0', STR_PAD_LEFT); ?></span>
                                     <span class="order-service"><?php echo htmlspecialchars($order['service_type']); ?></span>
                                 </div>
                                 <span class="order-status <?php echo $order['status']; ?>">
@@ -192,9 +192,12 @@ $completed_orders = $stmt->fetchColumn();
                                     <span>Total: ₱<?php echo number_format($order['total_price'], 2); ?></span>
                                     <span><?php echo date('M d, Y', strtotime($order['created_at'])); ?></span>
                                 </div>
-                                <?php if ($order['status'] == 'completed'): ?>
-                                    <a href="reviews.php?order_id=<?php echo $order['order_id']; ?>" class="btn-review">Leave a Review</a>
-                                <?php endif; ?>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                                    <a href="receipt.php?order_id=<?php echo $order['order_id']; ?>" class="btn-receipt">View Receipt</a>
+                                    <?php if ($order['status'] == 'completed'): ?>
+                                        <a href="reviews.php?order_id=<?php echo $order['order_id']; ?>" class="btn-review">Leave a Review</a>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -258,4 +261,3 @@ $completed_orders = $stmt->fetchColumn();
 </body>
 
 </html>
-
