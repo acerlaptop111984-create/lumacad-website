@@ -71,7 +71,6 @@ if (isset($_GET['delete_customer']) && isset($_GET['user_id'])) {
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Contact</th>
@@ -88,7 +87,6 @@ if (isset($_GET['delete_customer']) && isset($_GET['user_id'])) {
                                 $order_count = $stmt->fetchColumn();
                             ?>
                             <tr>
-                                <td>#<?php echo $customer['user_id']; ?></td>
                                 <td><?php echo htmlspecialchars($customer['full_name']); ?></td>
                                 <td><?php echo htmlspecialchars($customer['email']); ?></td>
                                 <td><?php echo htmlspecialchars($customer['contact_number'] ?? 'N/A'); ?></td>

@@ -28,7 +28,7 @@ $total_customers = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'custome
 
 $total_reviews = $pdo->query("SELECT COUNT(*) FROM reviews")->fetchColumn();
 
-$recent_orders = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC LIMIT 5")->fetchAll();
+$recent_orders = $pdo->query("SELECT o.*, u.full_name FROM orders o LEFT JOIN users u ON o.user_id = u.user_id ORDER BY o.created_at DESC LIMIT 5")->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -132,8 +132,8 @@ $recent_orders = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC LIMI
                     <tbody>
                         <?php foreach ($recent_orders as $order): ?>
                             <tr>
-                                <td>#<?php echo str_pad($order['order_id'], 4, '0', STR_PAD_LEFT); ?></td>
-                                <td>Customer <?php echo $order['user_id']; ?></td>
+                                <td>#<?php echo str_pad($order['customer_order_number'], 4, '0', STR_PAD_LEFT); ?></td>
+                                <td><?php echo htmlspecialchars($order['full_name'] ?? 'Guest'); ?></td>
                                 <td><?php echo htmlspecialchars($order['service_type']); ?></td>
                                 <td><?php echo $order['weight']; ?> kg</td>
                                 <td>₱<?php echo number_format($order['total_price'], 2); ?></td>

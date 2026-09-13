@@ -128,7 +128,7 @@ if (isset($_GET['delete_order']) && isset($_GET['order_id'])) {
                 <p>View and manage all customer orders.</p>
             </div>
             <div>
-                <a href="add-order.php" class="btn-add"> Add Order</a>
+               
             </div>
         </div>
 
@@ -169,9 +169,15 @@ if (isset($_GET['delete_order']) && isset($_GET['order_id'])) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($orders as $order): ?>
+                        <?php 
+                        $admin_row_index = 0;
+                        $admin_total = count($orders);
+                        foreach ($orders as $order): 
+                            $admin_row_index++;
+                            $admin_display_num = $admin_total - $admin_row_index + 1;
+                        ?>
                             <tr>
-                                <td>#<?php echo str_pad($order['order_id'], 4, '0', STR_PAD_LEFT); ?></td>
+                                <td>#<?php echo str_pad($admin_display_num, 4, '0', STR_PAD_LEFT); ?></td>
                                 <td><?php echo htmlspecialchars($order['full_name'] ?? 'Guest'); ?></td>
                                 <td><?php echo htmlspecialchars($order['service_type']); ?></td>
                                 <td><?php echo $order['weight']; ?> kg</td>
@@ -183,6 +189,7 @@ if (isset($_GET['delete_order']) && isset($_GET['order_id'])) {
                                 </td>
                                 <td><?php echo date('M d, Y', strtotime($order['created_at'])); ?></td>
                                 <td>
+                                    <a href="receipt.php?order_id=<?php echo $order['order_id']; ?>" class="action-view" style="color: var(--primary-teal); font-weight: 600; margin-right: 0.5rem;">View Receipt</a>
                                     <form action="" method="POST" style="display: inline;">
                                         <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
                                         <select name="new_status" onchange="this.form.submit()" style="padding: 0.2rem 0.4rem; border-radius: 5px; border: 1px solid var(--teal-light); font-family: var(--font-body); font-size: 0.8rem;">
@@ -195,7 +202,7 @@ if (isset($_GET['delete_order']) && isset($_GET['order_id'])) {
                                         </select>
                                         <input type="hidden" name="update_status" value="1">
                                     </form>
-                                    <a href="?delete_order=1&order_id=<?php echo $order['order_id']; ?>" class="action-delete" onclick="return confirm('Delete this order?')">Delete</a>
+                                    <a href="?delete_order=1&order_id=<?php echo $order['order_id']; ?>" class="action-delete" style="margin-left: 0.5rem;" onclick="return confirm('Delete this order?')">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
