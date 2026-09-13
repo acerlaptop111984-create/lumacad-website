@@ -1,2 +1,0 @@
-[2026-09-13 01:29:28] Database connection failed | Context: {"error":"SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it","host":"localhost","db":"lumacad_db"}
-[2026-09-13 01:29:38] Database connection failed | Context: {"error":"SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it","host":"localhost","db":"lumacad_db"}
